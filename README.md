@@ -8,13 +8,10 @@ Usage:
 
     sub2text.py [-h] [-s FILE] [-f FOLDER]
 
-    Convert a single subtitle file OR Enter a folder path to convert all subtitles
-in it
+    Convert a single subtitle file OR Enter a folder path to convert all subtitles in it
 
     optional arguments:
 
-    -h, --help                  show this help message and exit
-  
-    -s FILE, --file FILE        Complete Filepath and filename
-  
+    -h, --help                  show this help message and exit  
+    -s FILE, --file FILE        Complete Filepath and filename  
     -f FOLDER, --folder FOLDER   Folder/Directory/ Location of subtitle files
