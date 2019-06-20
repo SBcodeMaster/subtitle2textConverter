@@ -53,7 +53,7 @@ def create_newFile(location,oriname,exten):
     na = re.sub(r"\[.*?\]",'',oriname)
     na1 = na.rstrip()
     namm = na1[:len(na1)-4] + exten
-    if not location is False:
+    if not location is None:
         namm = os.path.join(os.path.abspath(location),os.path.basename(namm))
     return namm
 
