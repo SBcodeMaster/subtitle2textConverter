@@ -12,7 +12,7 @@ Usage:
     in it
 
     positional arguments:
-    fileLocation          Complete FileDirectory/Folder or a single filename,(Enclose it inside
+    fileLocation          Complete FileDirectory/Folder or a single filename(Enclose it inside
                           quotations " ")
 
     optional arguments:
