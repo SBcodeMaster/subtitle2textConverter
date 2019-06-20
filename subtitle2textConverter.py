@@ -7,7 +7,6 @@
 import glob, sys, re, os
 from argparse import ArgumentParser
 
-
 def parse_args():
     """
     Parse command line arguments and format arguments containing paths.
@@ -15,16 +14,14 @@ def parse_args():
     """
     parser = ArgumentParser(description='Convert a single subtitle file OR '
                                         'Enter a folder path to convert all subtitles in it ')
-    parser.add_argument('-s','--file', help='Complete Filepath and filename',type=str)
-    parser.add_argument('-f','--folder',help='Folder/Directory/ Location of subtitle files', type=str)
+    parser.add_argument('fileLocation', help='Complete FileDirectory or filename,(Enclose it inside quotations " ")',type=str)
+    parser.add_argument('-d','--dest',help='File location for output files (Enclose it inside quotations " ")',type=str)
     args = parser.parse_args()
-    if isinstance(args.file, str):
-        args.file = os.path.normpath(args.file.strip())
-    if isinstance(args.folder, str):
-        args.folder = os.path.normpath(args.folder.strip())
+    if isinstance(args.fileLocation, str):
+        args.fileLocation = os.path.normpath(args.fileLocation.strip())
     return parser, args
 
-def check_for_errors(filename, folder):
+def check_for_errors(filesource):
     """
     Check for errors, return corresponding
     error statement if any errors occurred.
@@ -33,18 +30,19 @@ def check_for_errors(filename, folder):
     :param folder: str. Folder path containing subtitles.
     :return: str or NoneType. Error statement or None.
     """
-    if filename != None and folder != None:
-        if not os.path.exists(filename) or not os.path.exists(folder):
-            message = f'Error: path does not exist.'
-        elif filename[-4:] != '.srt' or filename[-4:] != '.vtt':
+    message = None
+    if filesource != None:
+        if not os.path.exists(filesource):
+            message = 'Error: path does not exist.'
+        if os.path.isfile(filesource) and not (filesource[-4:] == '.srt' or filesource[-4:] == '.vtt'):
             message = f'Error: The subtitle extension must be either .srt or .vtt.'
-    elif filename == None and folder == None:
+    elif filesource is None:
         message = 'Error: You must provide either filepathname or folder path.'
     else:
         message = None
     return message
 
-def create_newFile(oriname,exten):
+def create_newFile(location,oriname,exten):
     """
     Creates file of another type with same name.
     Gets the source name, parses it and return the string (output name same as the source name) with .txt extension.
@@ -55,6 +53,8 @@ def create_newFile(oriname,exten):
     na = re.sub(r"\[.*?\]",'',oriname)
     na1 = na.rstrip()
     namm = na1[:len(na1)-4] + exten
+    if not location is False:
+        namm = os.path.join(os.path.abspath(location),os.path.basename(namm))
     return namm
 
 def parse_clean_text(te):
@@ -72,12 +72,12 @@ def parse_clean_text(te):
     re4 = 'WEBVTT'
 
     re_list = [re1, re2, re3, re4]
-    generic_re = re.compile( '|'.join( re_list) )
+    generic_re = re.compile('|'.join(re_list))
     newText = re.sub(generic_re,'',te)
     newT = ' '.join(newText.split())
     return newT
 
-def read_convert_singleFile(filename):
+def read_convert_singleFile(filename,location):
     """
     Reads a single subtitle file, extracts text from it, cleans it and then converts it into new text file.
     :param filename: str, File path and filename
@@ -85,12 +85,13 @@ def read_convert_singleFile(filename):
     """
     te = open(filename)
     text = te.read().strip()
-    nammm = create_newFile(filename,'.txt')
+    nammm = create_newFile(location,filename,'.txt')
+
     with open(nammm, 'w') as t1:
         newText = parse_clean_text(text)
         t1.write(newText)
 
-def convert_folder(folder):
+def convert_folder(folder,location):
     """
     Gets a list of files with required subtitle extension(srt and vtt) and performs read_convert_singleFile on each file.
     :param folder: str, Folder/location containing the subtitle files
@@ -100,20 +101,38 @@ def convert_folder(folder):
     for ext in ('*.srt', '*.vtt'):
         files.extend(glob.glob(os.path.join(folder, ext)))
     for f in files:
-        read_convert_singleFile(f)
+        read_convert_singleFile(f,location)
+
+
+
+def select_destination(args):
+    """
+    Check if the destination path is in the command line arguments,
+    if not destination path will be source path
+    If the destination path in arguments does not exist create it.
+    :param args: Namespace. Command line arguments.
+    :return: str. Destination folder path.
+    """
+    if args.dest is None:
+        destination = None
+    else:
+        destination = args.dest
+        if not os.path.exists(destination):
+            os.makedirs(destination)
+    return destination
 
 if __name__ == '__main__':
     parser, args = parse_args()
-    filename = args.file
-    folder = args.folder
+    src = args.fileLocation
+    to_folder = select_destination(args)
     # checking for errors
-    error = check_for_errors(filename,folder)
+    error = check_for_errors(src)
     if error:
         sys.exit(error)
-    if filename != None:
-        read_convert_singleFile(filename)
-    elif folder != None:
-        convert_folder(folder)
+    if os.path.isfile(src):
+        read_convert_singleFile(src,to_folder)
+    elif os.path.isdir(src):
+        convert_folder(src,to_folder)
     print("Conversion Completed!!")
 
 
