@@ -14,7 +14,7 @@ def parse_args():
     """
     parser = ArgumentParser(description='Convert a single subtitle file OR '
                                         'Enter a folder path to convert all subtitles in it ')
-    parser.add_argument('fileLocation', help='Complete FileDirectory or filename,(Enclose it inside quotations " ")',type=str)
+    parser.add_argument('fileLocation', help='Complete FileDirectory/Folder or a single filename,(Enclose it inside quotations " ")',type=str)
     parser.add_argument('-d','--dest',help='File location for output files (Enclose it inside quotations " ")',type=str)
     args = parser.parse_args()
     if isinstance(args.fileLocation, str):
