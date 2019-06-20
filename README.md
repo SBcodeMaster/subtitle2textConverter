@@ -6,12 +6,16 @@ Allows single file conversion and conversion of all subtitle files in a folder/d
 Usage:
 
 
-    sub2text.py [-h] [-s FILE] [-f FOLDER]
+    sub2text.py [-h] fileLocation [-d DEST] 
 
-    Convert a single subtitle file OR Enter a folder path to convert all subtitles in it
+    Convert a single subtitle file OR Enter a folder path to convert all subtitles
+    in it
+
+    positional arguments:
+    fileLocation          Complete FileDirectory or filename,(Enclose it inside
+                          quotations " ")
 
     optional arguments:
-
-    -h, --help                  show this help message and exit  
-    -s FILE, --file FILE        Complete Filepath and filename  
-    -f FOLDER, --folder FOLDER   Folder/Directory/ Location of subtitle files
+    -h, --help            show this help message and exit
+    -d DEST, --dest DEST  File location for output files (Enclose it inside
+                          quotations " ")
